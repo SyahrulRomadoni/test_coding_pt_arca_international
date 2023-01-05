@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 04 Jan 2023 pada 05.50
+-- Waktu pembuatan: 05 Jan 2023 pada 08.29
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.2.0
 
@@ -24,18 +24,39 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `buruh`
+--
+
+CREATE TABLE `buruh` (
+  `id` int(11) NOT NULL,
+  `id_data_buruh` int(11) NOT NULL,
+  `buruh` varchar(255) NOT NULL,
+  `persentase` varchar(255) NOT NULL,
+  `hasil` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `buruh`
+--
+
+INSERT INTO `buruh` (`id`, `id_data_buruh`, `buruh`, `persentase`, `hasil`, `created_at`, `updated_at`) VALUES
+(3, 7, 'Buruh 0', '50', '1000000', '2023-01-05 14:19:05', '2023-01-05 07:19:05'),
+(4, 7, 'Buruh 1', '25', '500000', '2023-01-05 14:22:08', '2023-01-05 07:22:08'),
+(5, 7, 'Buruh 2', '25', '500000', '2023-01-05 14:22:08', '2023-01-05 07:22:08'),
+(6, 8, 'Buruh 0', '50', '500000', '2023-01-05 06:34:34', '2023-01-05 06:34:34'),
+(7, 8, 'Buruh 1', '50', '500000', '2023-01-05 06:34:34', '2023-01-05 06:34:34');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `data_buruh`
 --
 
 CREATE TABLE `data_buruh` (
   `id` int(11) NOT NULL,
   `pembayaran` varchar(255) NOT NULL,
-  `buruh_a` varchar(255) DEFAULT NULL,
-  `rp_a` varchar(255) DEFAULT NULL,
-  `buruh_b` varchar(255) DEFAULT NULL,
-  `rp_b` varchar(255) DEFAULT NULL,
-  `buruh_c` varchar(255) DEFAULT NULL,
-  `rp_c` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,8 +65,9 @@ CREATE TABLE `data_buruh` (
 -- Dumping data untuk tabel `data_buruh`
 --
 
-INSERT INTO `data_buruh` (`id`, `pembayaran`, `buruh_a`, `rp_a`, `buruh_b`, `rp_b`, `buruh_c`, `rp_c`, `created_at`, `updated_at`) VALUES
-(2, '3000000', '25', '750000', '50', '1500000', '25', '750000', '2023-01-04 09:57:54', '2023-01-04 02:57:54');
+INSERT INTO `data_buruh` (`id`, `pembayaran`, `created_at`, `updated_at`) VALUES
+(7, '2000000', '2023-01-05 14:22:08', '2023-01-05 07:22:08'),
+(8, '1000000', '2023-01-05 06:34:34', '2023-01-05 06:34:34');
 
 -- --------------------------------------------------------
 
@@ -147,6 +169,12 @@ INSERT INTO `users` (`id`, `id_role`, `name`, `email`, `email_verified_at`, `pas
 --
 
 --
+-- Indeks untuk tabel `buruh`
+--
+ALTER TABLE `buruh`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `data_buruh`
 --
 ALTER TABLE `data_buruh`
@@ -191,10 +219,16 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT untuk tabel `buruh`
+--
+ALTER TABLE `buruh`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT untuk tabel `data_buruh`
 --
 ALTER TABLE `data_buruh`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `failed_jobs`

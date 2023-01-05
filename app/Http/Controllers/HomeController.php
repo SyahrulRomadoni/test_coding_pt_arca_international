@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Buruh;
 use App\Models\DataBuruh;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,13 +32,24 @@ class HomeController extends Controller
         if (Auth::user()->id_role == 1) {
             $model = new DataBuruh;
             $model->pembayaran = $request->pembayaran;
-            $model->buruh_a = $request->buruh_a;
-            $model->rp_a = $request->rp_a;
-            $model->buruh_b = $request->buruh_b;
-            $model->rp_b = $request->rp_b;
-            $model->buruh_c = $request->buruh_c;
-            $model->rp_c = $request->rp_c;
             $model->save();
+
+            if ($request->buruh[0]['persen'] == '') {
+                // Kalo Link Kosong
+            } else {
+                $i = 0 ;
+                foreach ($request->buruh as $key => $value) {
+                    $dataA = ($value['persen'] / 100) * $request->pembayaran;
+                    
+                    $model_buruh = new Buruh();
+                    $model_buruh->id_data_buruh = $model->id;
+                    $model_buruh->buruh = "Buruh " . $i;
+                    $model_buruh->persentase = $value['persen'];
+                    $model_buruh->hasil = $dataA;
+                    $model_buruh->save();
+                    $i++;
+                }
+            }
 
             if ($model) {
                 return Response()->json(['status' => 'success', 'message' => 'Data berhasil disimpan']);
@@ -51,27 +63,29 @@ class HomeController extends Controller
 
     public function view(Request $request)
     {
-        $model = DataBuruh::where('id', $request->id)->first();
+        $model = DataBuruh::join('buruh', 'buruh.id_data_buruh', 'data_buruh.id')->where('data_buruh.id', $request->id)->get();
         return Response()->json($model);
     }
 
     public function edit(Request $request)
     {
-        $model = DataBuruh::where('id', $request->id)->first();
+        $model = DataBuruh::join('buruh', 'buruh.id_data_buruh', 'data_buruh.id')->where('data_buruh.id', $request->id)->get();
         return Response()->json($model);
     }
 
     public function update(Request $request)
     {
-        $model = DataBuruh::where('id', $request->id)->first();
+        $id = $request->id;
+        $model = DataBuruh::where('id', $id)->first();
         $model->pembayaran = $request->edit_pembayaran;
-        $model->buruh_a = $request->edit_buruh_a;
-        $model->rp_a = $request->edit_rp_a;
-        $model->buruh_b = $request->edit_buruh_b;
-        $model->rp_b = $request->edit_rp_b;
-        $model->buruh_c = $request->edit_buruh_c;
-        $model->rp_c = $request->edit_rp_c;
         $model->save();
+
+        $model_buruh = Buruh::where('id_data_buruh', $model->id)->get();
+        foreach ($model_buruh as $mlb) {
+            $dataA = ($mlb->persentase / 100) * $request->edit_pembayaran;
+            $mlb->hasil = $dataA;
+            $mlb->save();
+        }
 
         if ($model) {
             return Response()->json(['status' => 'success', 'message' => 'Data berhasil diupdate']);
@@ -83,7 +97,14 @@ class HomeController extends Controller
     public function delete(Request $request)
     {
         if (Auth::user()->id_role == 1) {
-            $model = DataBuruh::where('id', $request->id)->first();
+            
+            $id = $request->id;
+            $model = DataBuruh::where('id', $id)->firstOrFail();
+            $model_buruh = Buruh::where('id_data_buruh', $id)->get();
+            foreach ($model_buruh as $mlb) {
+                $a = Buruh::where('id_data_buruh', $id)->first();
+                $a->delete();
+            }
             $model->delete();
 
             if ($model) {

@@ -2,14 +2,16 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class DataBuruh extends Model
+class Buruh extends Model
 {
-    protected $table = 'data_buruh';
+    protected $table = 'buruh';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'pembayaran',
+        'buruh',
+        'persentase',
+        'hasil',
     ];
 
     protected $hidden = [

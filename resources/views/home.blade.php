@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<input type="text" hidden id="id-delete">
+
 <div class="container">
     <div class="row justify-content-center">
 
@@ -23,8 +25,6 @@
             </div>
         </div>
 
-        <input type="text" hidden id="id-delete">
-
         {{-- Tabel --}}
         <div class="row py-5">
             <div class="col-sm-12">
@@ -39,12 +39,6 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Pembayaran</th>
-                                        <th>Buruh A</th>
-                                        <th>Rupiah A</th>
-                                        <th>Buruh B</th>
-                                        <th>Rupiah A</th>
-                                        <th>Buruh C</th>
-                                        <th>Rupiah A</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -80,66 +74,50 @@
                             Rp.
                         </div>
                         <div class="col-sm-8 input-data">
-                            <input type="text" class="form-control" name="pembayaran" id="pembayaran" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase1()">
+                            <input type="text" class="form-control" name="pembayaran" id="pembayaran" placeholder="xxxxxxxxxx">
                         </div>
                     </div>
 
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh A</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="buruh_a" id="buruh_a" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase1()" maxlength="2">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
+                    <div class="table-responsive">
+                        <table id="dynamicTable" class="table table-bordered table-striped" style="width:100%">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Buruh</th>
+                                    <th>Persentase</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Buruh 0</td>
+                                    <td>
+                                        <input type="text" id="buruhs0" name="buruhs" value="" hidden>
+                                        <input type="text" name="buruh[0][persen]" placeholder="%"
+                                            class="form-control" onblur="findTotal1()" onkeyup="hitungPersentase1(0), setBuruhs(0)" maxlength="2"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" name="add" id="add" class="btn btn-success">Add</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh B</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="buruh_b" id="buruh_b" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase1()" maxlength="2">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh C</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="buruh_c" id="buruh_c" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase1()" maxlength="2">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
-                    </div>
+                    <input hidden type="text" name="total1" id="total1" placeholder="xxxxxxxxxx">
 
                     <hr>
 
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh A</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="rp_a" id="rp_a">
-                            <p name="text_buruh_a" id="text_buruh_a">xxxxxxxxxx</p>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh B</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="rp_b" id="rp_b">
-                            <p name="text_buruh_b" id="text_buruh_b">xxxxxxxxxx</p>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh C</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="rp_c" id="rp_c">
-                            <p name="text_buruh_c" id="text_buruh_c">xxxxxxxxxx</p>
+                    <div id="dynamicTable2">
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-2">Buruh 0</label>
+                            <div class="col-sm-8 ">
+                                <p name="text_buruh_0" id="text_buruh_0">xxxxxxxxxx</p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" id="btn-simpan1" disabled>Save</button>
+                        <button type="submit" class="btn btn-primary" id="btn-simpan1">Save</button>
                     </div>
                 </div>
 
@@ -152,7 +130,7 @@
 {{-- Modal View --}}
 <div class="modal fade" id="viewDataBuruh" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="viewDataBuruhLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="viewDataBuruhLabel">View Data Buruh</h3>
@@ -160,58 +138,26 @@
                     aria-label="Close" onclick="clearData()"></button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body text-center">
                 <div class="form-group row mb-3">
-                    <label class="col-sm-2">Pembayaran</label>
-                    <div class="col-sm-8 input-data">
-                        <p name="view_pembayaran" id="view_pembayaran"></p>
+                    <div class="col-sm-12 input-data">
+                        <h3><b>Pembayaran</b></h3><br>
+                        <h1 name="view_pembayaran" id="view_pembayaran"></h1>
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh A</label>
-                    <div class="col-sm-3 input-data">
-                        <p name="view_buruh_a" id="view_buruh_a"></p>
-                    </div>
-                </div>
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh B</label>
-                    <div class="col-sm-3 input-data">
-                        <p name="view_buruh_b" id="view_buruh_b"></p>
-                    </div>
-                </div>
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh C</label>
-                    <div class="col-sm-3 input-data">
-                        <p name="view_buruh_c" id="view_buruh_c"></p>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh A</label>
-                    <div class="col-sm-8 ">
-                        <p name="view_text_buruh_a" id="view_text_buruh_a">xxxxxxxxxx</p>
-                    </div>
-                </div>
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh B</label>
-                    <div class="col-sm-8 ">
-                        <p name="view_text_buruh_b" id="view_text_buruh_b">xxxxxxxxxx</p>
-                    </div>
-                </div>
-                <div class="form-group row mb-3">
-                    <label class="col-sm-2">Buruh C</label>
-                    <div class="col-sm-8 ">
-                        <p name="view_text_buruh_c" id="view_text_buruh_c">xxxxxxxxxx</p>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="btn-simpan2">Save</button>
+                <div class="table-responsive">
+                    <table id="dynamicTableView" class="table table-bordered table-striped" style="width:100%">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Buruh</th>
+                                <th>Persentase</th>
+                                <th>Hasil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -242,62 +188,22 @@
                             Rp.
                         </div>
                         <div class="col-sm-8 input-data">
-                            <input type="text" class="form-control" name="edit_pembayaran" id="edit_pembayaran" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase2()">
+                            <input type="text" class="form-control" name="edit_pembayaran" id="edit_pembayaran" placeholder="xxxxxxxxxx">
                         </div>
                     </div>
 
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh A</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="edit_buruh_a" id="edit_buruh_a" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase2()">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh B</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="edit_buruh_b" id="edit_buruh_b" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase2()">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh C</label>
-                        <div class="col-sm-3 input-data">
-                            <input type="text" class="form-control" name="edit_buruh_c" id="edit_buruh_c" placeholder="xxxxxxxxxx" onkeyup="hitungPersentase2()">
-                        </div>
-                        <div class="col-sm-1 input-data">
-                            %
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh A</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="edit_rp_a" id="edit_rp_a">
-                            <p name="edit_text_buruh_a" id="edit_text_buruh_a">xxxxxxxxxx</p>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh B</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="edit_rp_b" id="edit_rp_b">
-                            <p name="edit_text_buruh_b" id="edit_text_buruh_b">xxxxxxxxxx</p>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-2">Buruh C</label>
-                        <div class="col-sm-8 ">
-                            <input hidden type="text" name="edit_rp_c" id="edit_rp_c">
-                            <p name="edit_text_buruh_c" id="edit_text_buruh_c">xxxxxxxxxx</p>
-                        </div>
+                    <div class="table-responsive">
+                        <table id="dynamicTableEdit" class="table table-bordered table-striped" style="width:100%">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Buruh</th>
+                                    <th>Persentase</th>
+                                    <th>Hasil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="modal-footer">
@@ -343,6 +249,7 @@
 @section('script')
 <script>
     var tbl_data_buruh = null;
+    var i = 0;
 
     {{-- Get Data Tables --}}
     $(function () {
@@ -361,48 +268,6 @@
                     render: function (data, type, row) {
                         var pembayaran = row.pembayaran
                         return "Rp. " + pembayaran;
-                    }
-                },
-                {
-                    data: 'buruh_a',
-                    render: function (data, type, row) {
-                        var buruh_a = row.buruh_a
-                        return buruh_a + "%";
-                    }
-                },
-                {
-                    data: 'rp_a',
-                    render: function (data, type, row) {
-                        var rp_a = row.rp_a
-                        return "Rp. "+ rp_a;
-                    }
-                },
-                {
-                    data: 'buruh_b',
-                    render: function (data, type, row) {
-                        var buruh_b = row.buruh_b
-                        return buruh_b + "%";
-                    }
-                },
-                {
-                    data: 'rp_b',
-                    render: function (data, type, row) {
-                        var rp_b = row.rp_b
-                        return "Rp. "+ rp_b;
-                    }
-                },
-                {
-                    data: 'buruh_c',
-                    render: function (data, type, row) {
-                        var buruh_c = row.buruh_c
-                        return buruh_c + "%";
-                    }
-                },
-                {
-                    data: 'rp_c',
-                    render: function (data, type, row) {
-                        var rp_c = row.rp_c
-                        return "Rp. "+ rp_c;
                     }
                 },
                 {
@@ -464,14 +329,9 @@
             $(element).removeClass('is-invalid');
         },
         submitHandler: function (form) {
-            var x = parseInt(document.getElementById("buruh_a").value);
-            if (isNaN(x)) x = 0;
-            var y = parseInt(document.getElementById("buruh_b").value);
-            if (isNaN(y)) y = 0;
-            var z = parseInt(document.getElementById("buruh_c").value);
-            if (isNaN(z)) z = 0;
-            var c = x + y + z;
-            if (c == 100) {
+
+            var x = document.getElementById('total1').value;
+            if (x == 100) {
                 document.getElementById("btn-simpan1").disabled = false;
                 var formData = new FormData($("#form_create")[0]);
                 $.ajax({
@@ -509,13 +369,6 @@
                 });
             } else {
                 swal('Error', 'Tidak boleh kurang/lebih dari 100%', 'error');
-                $("#buruh_a").val("");
-                $("#buruh_b").val("");
-                $("#buruh_c").val("");
-                var textA = document.getElementById("text_buruh_a").innerHTML = "xxxxxxxxxx";
-                var textB = document.getElementById("text_buruh_b").innerHTML = "xxxxxxxxxx";
-                var textC = document.getElementById("text_buruh_c").innerHTML = "xxxxxxxxxx";
-                document.getElementById("btn-simpan1").disabled = true;
             }
         }
     });
@@ -533,15 +386,15 @@
             },
             success: function (data) {
                 $('#viewDataBuruh').modal('show');
-                var atextA = document.getElementById("view_pembayaran").innerHTML = "Rp." + data.pembayaran;
+                var atextA = document.getElementById("view_pembayaran").innerHTML = "Rp." + data[0].pembayaran;
 
-                var ptextA = document.getElementById("view_buruh_a").innerHTML = data.buruh_a + "%";
-                var ptextB = document.getElementById("view_buruh_b").innerHTML = data.buruh_b + "%";
-                var ptextC = document.getElementById("view_buruh_c").innerHTML = data.buruh_c + "%";
-
-                var textA = document.getElementById("view_text_buruh_a").innerHTML = "Rp." + data.rp_a;
-                var textB = document.getElementById("view_text_buruh_b").innerHTML = "Rp." + data.rp_b;
-                var textC = document.getElementById("view_text_buruh_c").innerHTML = "Rp." + data.rp_c;
+                $.each(data, function(i, item) {
+                    var $tr = $('<tr>').append(
+                        $('<td>').text(item.buruh),
+                        $('<td>').text(item.persentase),
+                        $('<td>').text(item.hasil)
+                    ).appendTo('#dynamicTableView');
+                });
             }
         })
     }
@@ -559,15 +412,17 @@
             },
             success: function (data) {
                 $('#editDataBuruh').modal('show');
-                $('#edit_id').val(data.id);
-                $('#edit_pembayaran').val(data.pembayaran);
-                $('#edit_buruh_a').val(data.buruh_a);
-                $('#edit_buruh_b').val(data.buruh_b);
-                $('#edit_buruh_c').val(data.buruh_c);
+                $('#edit_id').val(data[0].id_data_buruh);
 
-                var textA = document.getElementById("edit_text_buruh_a").innerHTML = data.rp_a;
-                var textB = document.getElementById("edit_text_buruh_b").innerHTML = data.rp_b;
-                var textC = document.getElementById("edit_text_buruh_c").innerHTML = data.rp_c;
+                $('#edit_pembayaran').val(data[0].pembayaran);
+
+                $.each(data, function(i, item) {
+                    var $tr = $('<tr>').append(
+                        $('<td>').text(item.buruh),
+                        $('<td>').text(item.persentase),
+                        $('<td>').text(item.hasil)
+                    ).appendTo('#dynamicTableEdit');
+                });
             }
         })
     }
@@ -592,60 +447,40 @@
             $(element).removeClass('is-invalid');
         },
         submitHandler: function (form) {
-            var x = parseInt(document.getElementById("edit_buruh_a").value);
-            if (isNaN(x)) x = 0;
-            var y = parseInt(document.getElementById("edit_buruh_b").value);
-            if (isNaN(y)) y = 0;
-            var z = parseInt(document.getElementById("edit_buruh_c").value);
-            if (isNaN(z)) z = 0;
-            var c = x + y + z;
+            var formData = new FormData($("#form_update")[0]);
+            $.ajax({
+                type: 'POST',
+                url: "{{route('data_buruh.update')}}",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function ()
+                {
+                    $("#btn-simpan2").attr("disabled", true);
+                    $("#btn-simpan2").html('<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>');
+                },
+                success: (data) => {
 
-            if (c == 100) {
-                document.getElementById("btn-simpan2").disabled = false;
-                var formData = new FormData($("#form_update")[0]);
-                $.ajax({
-                    type: 'POST',
-                    url: "{{route('data_buruh.update')}}",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function ()
-                    {
-                        $("#btn-simpan2").attr("disabled", true);
-                        $("#btn-simpan2").html('<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>');
-                    },
-                    success: (data) => {
-
-                        if (data.status == 'success') {
-                            swal('Success', data.message, 'success');
-                        } else {
-                            swal('Error', data.message, 'error');
-                        }
-                        tbl_data_buruh.ajax.reload();
-                        $('#editDataBuruh').modal('hide');
-                        clearData();
-                        
-                    },
-                    complete: function (xhr) {
-                        $("#btn-simpan2").html('Save');
-                        $("#btn-simpan2").attr("disabled", false);
-                    },
-                    error: function (data) {
-                        console.log(data);
-                        clearData();
+                    if (data.status == 'success') {
+                        swal('Success', data.message, 'success');
+                    } else {
+                        swal('Error', data.message, 'error');
                     }
-                });
-            } else {
-                swal('Error', 'Tidak boleh kurang/lebih dari 100%', 'error');
-                $("#edit_buruh_a").val("");
-                $("#edit_buruh_b").val("");
-                $("#edit_buruh_c").val("");
-                var textA = document.getElementById("edit_text_buruh_a").innerHTML = "xxxxxxxxxx";
-                var textB = document.getElementById("edit_text_buruh_b").innerHTML = "xxxxxxxxxx";
-                var textC = document.getElementById("edit_text_buruh_c").innerHTML = "xxxxxxxxxx";
-                document.getElementById("btn-simpan2").disabled = true;
-            }
+                    tbl_data_buruh.ajax.reload();
+                    $('#editDataBuruh').modal('hide');
+                    clearData();
+                    
+                },
+                complete: function (xhr) {
+                    $("#btn-simpan2").html('Save');
+                    $("#btn-simpan2").attr("disabled", false);
+                },
+                error: function (data) {
+                    console.log(data);
+                    clearData();
+                }
+            });
         }
     });
 
@@ -688,94 +523,71 @@
 
     {{-- Clear Data --}}
     function clearData() {
-        $("#pembayaran").val("");
-        $("#edit_pembayaran").val("");
-
-        $("#buruh_a").val("");
-        $("#edit_buruh_a").val("");
-
-        $("#buruh_b").val("");
-        $("#edit_buruh_b").val("");
-
-        $("#buruh_c").val("");
-        $("#edit_buruh_c").val("");
-
-        var textA = document.getElementById("text_buruh_a").innerHTML = "xxxxxxxxxx";
-        var textB = document.getElementById("text_buruh_b").innerHTML = "xxxxxxxxxx";
-        var textC = document.getElementById("text_buruh_c").innerHTML = "xxxxxxxxxx";
-        var textA = document.getElementById("edit_text_buruh_a").innerHTML = "xxxxxxxxxx";
-        var textB = document.getElementById("edit_text_buruh_b").innerHTML = "xxxxxxxxxx";
-        var textC = document.getElementById("edit_text_buruh_c").innerHTML = "xxxxxxxxxx";
+        var table1 = $("#dynamicTableEdit").on("draw.dt", function () {
+            $(this).find(".dataTables_empty").parents('tbody').empty();
+        }).DataTable().clear().draw();
+        var table1 = $("#dynamicTableView").on("draw.dt", function () {
+            $(this).find(".dataTables_empty").parents('tbody').empty();
+        }).DataTable().clear().draw();
     }
-
-    $('.modal').on('hidden.bs.modal', function (e) {
-        clearData();
-    })
-
+    
     {{-- Cara Hitung Persen --}}
-    function hitungPersentase1() {
+    function hitungPersentase1(id) {
         var pem = document.getElementById("pembayaran").value;
-        var pBuruhA = document.getElementById("buruh_a").value;
-        var pBuruhB = document.getElementById("buruh_b").value;
-        var pBuruhC = document.getElementById("buruh_c").value;
-
-        var dataA = (pBuruhA / 100) * pem;
-        var textAin = document.getElementById("rp_a").value = dataA;
-        var textA = document.getElementById("text_buruh_a").innerHTML = dataA;
-
-        var dataB = (pBuruhB / 100) * pem;
-        var textBin = document.getElementById("rp_b").value = dataB;
-        var textB = document.getElementById("text_buruh_b").innerHTML = dataB;
-
-        var dataC = (pBuruhC / 100) * pem;
-        var textCin = document.getElementById("rp_c").value = dataC;
-        var textC = document.getElementById("text_buruh_c").innerHTML = dataC;
-
-        var x = parseInt(document.getElementById("buruh_a").value);
-        if (isNaN(x)) x = 0;
-        var y = parseInt(document.getElementById("buruh_b").value);
-        if (isNaN(y)) y = 0;
-        var z = parseInt(document.getElementById("buruh_c").value);
-        if (isNaN(z)) z = 0;
-        var c = x + y + z;
-
-        if (c == 100) {
-            document.getElementById("btn-simpan1").disabled = false;
-        } else {
-            document.getElementById("btn-simpan1").disabled = true;
-        }
+        var data = document.getElementsByName("buruh["+id+"][persen]")[0].value;
+        var dataA = (data / 100) * pem;
+        var textA = document.getElementById("text_buruh_" + id).innerHTML = dataA;
     }
 
-    function hitungPersentase2() {
-        var pem = document.getElementById("edit_pembayaran").value;
-        var pBuruhA = document.getElementById("edit_buruh_a").value;
-        var pBuruhB = document.getElementById("edit_buruh_b").value;
-        var pBuruhC = document.getElementById("edit_buruh_c").value;
+    function setBuruhs(id) {
+        var data = document.getElementsByName("buruh["+id+"][persen]")[0].value;
+        var data1 = document.getElementById("buruhs" + id).value = data;
+    }
 
-        var dataA = (pBuruhA / 100) * pem;
-        var textAin = document.getElementById("edit_rp_a").value = dataA;
-        var textA = document.getElementById("edit_text_buruh_a").innerHTML = dataA;
+    function findTotal1(){
+        var arr = document.getElementsByName('buruhs');
+        var tot=0;
+        for(var i=0;i<arr.length;i++){
+            if(parseInt(arr[i].value))
+                tot += parseInt(arr[i].value);
+        }
+        document.getElementById('total1').value = tot;
+    }
 
-        var dataB = (pBuruhB / 100) * pem;
-        var textBin = document.getElementById("edit_rp_b").value = dataB;
-        var textB = document.getElementById("edit_text_buruh_b").innerHTML = dataB;
+    {{-- Buruh Dinamis --}}
+    $("#add").click(function () {
+        ++i;
+        $("#dynamicTable").append(
+            '<tr>' +
+                '<td>Buruh ' + i + '</td>' +
+                '<td>' +
+                    '<input type="text" id="buruhs'+i+'" name="buruhs" value="" hidden>' +
+                    '<input type="text" name="buruh[' + i + '][persen]" placeholder="%" class="form-control" onblur="findTotal1()" onkeyup="hitungPersentase1(' + i + '), setBuruhs(' + i + ')" maxlength="2"/>' +
+                '</td>' +
+                '<td>' +
+                    '<button type="button" class="btn btn-danger remove-tr" onclick="removes1(' + i + ')">Remove</button>' +
+                '</td>' +
+            '</tr>'
+        );
 
-        var dataC = (pBuruhC / 100) * pem;
-        var textCin = document.getElementById("edit_rp_c").value = dataC;
-        var textC = document.getElementById("edit_text_buruh_c").innerHTML = dataC;
+        $("#dynamicTable2").append(
+            '<div class="rms' + i + ' form-group row mb-3">' +
+                '<label class="col-sm-2">Buruh ' + i + '</label>' +
+                '<div class="col-sm-8 ">' +
+                    '<p name="text_buruh_' + i + '" id="text_buruh_' + i + '">xxxxxxxxxx</p>' +
+                '</div>' +
+            '</div>'
+        );
+    });
 
-        var x = parseInt(document.getElementById("edit_buruh_a").value);
-        if (isNaN(x)) x = 0;
-        var y = parseInt(document.getElementById("edit_buruh_b").value);
-        if (isNaN(y)) y = 0;
-        var z = parseInt(document.getElementById("edit_buruh_c").value);
-        if (isNaN(z)) z = 0;
-        var c = x + y + z;
+    $(document).on('click', '.remove-tr', function () {
+        $(this).parents('tr').remove();
+    });
 
-        if (c == 100) {
-            document.getElementById("btn-simpan2").disabled = false;
-        } else {
-            document.getElementById("btn-simpan2").disabled = true;
+    function removes1(id) {
+        const elements = document.getElementsByClassName('rms' + id);
+        while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
         }
     }
 </script>

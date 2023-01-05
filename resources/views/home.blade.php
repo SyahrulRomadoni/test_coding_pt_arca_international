@@ -391,8 +391,8 @@
                 $.each(data, function(i, item) {
                     var $tr = $('<tr>').append(
                         $('<td>').text(item.buruh),
-                        $('<td>').text(item.persentase),
-                        $('<td>').text(item.hasil)
+                        $('<td>').text(item.persentase + '%'),
+                        $('<td>').text('Rp.' + item.hasil)
                     ).appendTo('#dynamicTableView');
                 });
             }
@@ -419,8 +419,8 @@
                 $.each(data, function(i, item) {
                     var $tr = $('<tr>').append(
                         $('<td>').text(item.buruh),
-                        $('<td>').text(item.persentase),
-                        $('<td>').text(item.hasil)
+                        $('<td>').text(item.persentase + '%'),
+                        $('<td>').text('Rp.' + item.hasil)
                     ).appendTo('#dynamicTableEdit');
                 });
             }
